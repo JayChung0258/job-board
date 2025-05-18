@@ -15,8 +15,8 @@ router = APIRouter()
 def search_jobs(
     query: Optional[str] = None,
     location: Optional[str] = None,
-    tags: Optional[List[str]] = Query(None),
-    tag_categories: Optional[List[str]] = Query(None),
+    tags: List[str] = Query(default=[]),
+    tag_categories: List[str] = Query(default=[]),
     date_from: Optional[date] = None,
     date_to: Optional[date] = None,
     page: int = 1,
@@ -26,7 +26,10 @@ def search_jobs(
     """
     Search for jobs with various filters
     """
-    search_service = SearchService(db)
+    print(
+        f"API received: query={query}, location={location}, tags={tags}, categories={tag_categories}"
+    )
+
     search_params = JobSearchFilter(
         query=query,
         location=location,
@@ -38,8 +41,8 @@ def search_jobs(
         limit=limit,
     )
 
-    result = search_service.search_jobs(search_params)
-    return result
+    search_service = SearchService(db)
+    return search_service.search_jobs(search_params)
 
 
 @router.get("/{job_id}")

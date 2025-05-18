@@ -1,4 +1,5 @@
 import axios from "axios";
+import qs from "qs";
 import { Job, JobSearchParams, JobSearchResponse } from "../types/job";
 
 const API_URL = "/api/v1";
@@ -8,6 +9,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  paramsSerializer: (params) => qs.stringify(params, { indices: false }),
 });
 
 export const searchJobs = async (

@@ -34,7 +34,7 @@ class SearchService:
             query = query.filter(Job.job_posting_date <= params.date_to)
 
         # Tag filters
-        if params.tags or params.tag_categories:
+        if params.tags:
             query = query.join(Job.tag_relations).join(Tag)
 
             if params.tags:

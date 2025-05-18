@@ -13,3 +13,4 @@ class JobSearchFilter(BaseModel):
     date_to: Optional[date] = None
     page: int = 1
     limit: int = 10
+    match_all_tags: bool = False  # Default to OR logic (match any tag)

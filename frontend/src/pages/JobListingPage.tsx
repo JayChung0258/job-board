@@ -36,6 +36,7 @@ const JobListingPage: React.FC = () => {
     setError(null);
 
     try {
+      console.log("Fetching jobs with params:", params);
       const response: JobSearchResponse = await searchJobs(params);
       setJobs(response.items);
       setPagination({
