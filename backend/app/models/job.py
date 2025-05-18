@@ -20,5 +20,5 @@ class Job(Base):
     created_at = Column(Date, default=datetime.utcnow)
     updated_at = Column(Date, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Relationship with Tag model through JobTag
+    # Use string for model name to avoid circular imports
     tag_relations = relationship("JobTag", back_populates="job")

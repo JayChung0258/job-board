@@ -9,7 +9,9 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Job Board API"
 
     # Database settings
-    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./job_board.db")
+    DATABASE_URL: str = os.getenv(
+        "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/job_board"
+    )
 
     # CORS settings
     BACKEND_CORS_ORIGINS: list = ["*"]

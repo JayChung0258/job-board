@@ -21,5 +21,5 @@ class Tag(Base):
     category = Column(Enum(TagCategory), nullable=False)
     description = Column(String(255))
 
-    # Relationship with Job model through JobTag
+    # Use string for model name to avoid circular imports
     job_relations = relationship("JobTag", back_populates="tag")

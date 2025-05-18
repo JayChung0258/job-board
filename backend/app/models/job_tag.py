@@ -9,13 +9,13 @@ class JobTag(Base):
     __tablename__ = "job_tags"
 
     id = Column(Integer, primary_key=True, index=True)
-    job_id = Column(Integer, ForeignKey("jobs.id"), nullable=False)
-    tag_id = Column(Integer, ForeignKey("tags.id"), nullable=False)
+    job_id = Column(Integer, ForeignKey("jobs.id"))
+    tag_id = Column(Integer, ForeignKey("tags.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # Relationships
-    job = relationship("Job", back_populates="tag_relations")
-    tag = relationship("Tag", back_populates="job_relations")
+    # Define relationships with explicit foreign_keys to avoid ambiguity
+    job = relationship("Job", foreign_keys=[job_id], back_populates="tag_relations")
+    tag = relationship("Tag", foreign_keys=[tag_id], back_populates="job_relations")
 
     # Composite unique constraint
     __table_args__ = (
