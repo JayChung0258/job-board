@@ -61,6 +61,11 @@ yarn-error.log*
 # Cursor specific
 .cursor/
 
+# Mock data
+**/mock_*.json
+**/data/mock/
+**/test/fixtures/
+
 # Misc
 .DS_Store
 Thumbs.db

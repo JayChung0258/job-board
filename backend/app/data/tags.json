@@ -1,0 +1,62 @@
+{
+  "tags": {
+    "role": [
+      "Frontend-Development",
+      "Backend-Development",
+      "Full-Stack-Development",
+      "DevOps",
+      "Data-Science",
+      "Product-Management",
+      "UX-Design",
+      "UI-Design",
+      "Business-Analysis"
+    ],
+    "technology": [
+      "Python",
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Node.js",
+      "FastAPI",
+      "SQLAlchemy",
+      "AWS",
+      "Kubernetes",
+      "Docker"
+    ],
+    "skill": [
+      "API-Development",
+      "Database",
+      "Microservices",
+      "CI-CD",
+      "Cloud-Computing",
+      "Machine-Learning",
+      "Big-Data",
+      "Analytics",
+      "AI",
+      "Cybersecurity"
+    ],
+    "methodology": [
+      "Agile",
+      "Scrum",
+      "Requirements-Gathering",
+      "Documentation",
+      "Stakeholder-Management",
+      "User-Research",
+      "Design-Systems",
+      "Product-Analytics",
+      "Strategy",
+      "Roadmapping"
+    ],
+    "tool": [
+      "Figma",
+      "Git",
+      "Jira",
+      "Confluence",
+      "Docker",
+      "Kubernetes",
+      "AWS",
+      "Azure",
+      "GCP"
+    ]
+  }
+} 
