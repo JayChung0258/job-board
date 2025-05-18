@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, Enum
-from sqlalchemy.orm import relationship
 import enum
 
 from app.core.db import Base
+from sqlalchemy import Column, Enum, Integer, String
+from sqlalchemy.orm import relationship
+
 
 class TagCategory(str, enum.Enum):
     ROLE = "role"
@@ -10,6 +11,7 @@ class TagCategory(str, enum.Enum):
     SKILL = "skill"
     METHODOLOGY = "methodology"
     TOOL = "tool"
+
 
 class Tag(Base):
     __tablename__ = "tags"

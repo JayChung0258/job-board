@@ -1,11 +1,9 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import or_, and_, func
-from typing import List, Optional
-from datetime import date
-
 from app.models.job import Job
-from app.models.tag import Tag, TagCategory
+from app.models.tag import Tag
 from app.schemas.job_filter import JobSearchFilter
+from sqlalchemy import or_
+from sqlalchemy.orm import Session
+
 
 class SearchService:
     def __init__(self, db: Session):
@@ -21,7 +19,7 @@ class SearchService:
                 or_(
                     Job.job_position.ilike(search_term),
                     Job.company_name.ilike(search_term),
-                    Job.job_location.ilike(search_term)
+                    Job.job_location.ilike(search_term),
                 )
             )
 
@@ -38,10 +36,10 @@ class SearchService:
         # Tag filters
         if params.tags or params.tag_categories:
             query = query.join(Job.tag_relations).join(Tag)
-            
+
             if params.tags:
                 query = query.filter(Tag.name.in_(params.tags))
-            
+
             if params.tag_categories:
                 query = query.filter(Tag.category.in_(params.tag_categories))
 
@@ -59,5 +57,5 @@ class SearchService:
             "total": total,
             "page": params.page,
             "limit": params.limit,
-            "pages": (total + params.limit - 1) // params.limit
-        } 
+            "pages": (total + params.limit - 1) // params.limit,
+        }

@@ -1,6 +1,8 @@
-from typing import List, Optional
-from pydantic import BaseModel
 from datetime import date
+from typing import List, Optional
+
+from pydantic import BaseModel
+
 
 class JobSearchFilter(BaseModel):
     query: Optional[str] = None
@@ -10,4 +12,4 @@ class JobSearchFilter(BaseModel):
     date_from: Optional[date] = None
     date_to: Optional[date] = None
     page: int = 1
-    limit: int = 10 
+    limit: int = 10

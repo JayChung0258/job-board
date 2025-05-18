@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
-from sqlalchemy.orm import relationship
 from datetime import datetime
 
 from app.core.db import Base
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy.orm import relationship
+
 
 class JobTag(Base):
     __tablename__ = "job_tags"
@@ -20,5 +21,5 @@ class JobTag(Base):
     __table_args__ = (
         # This ensures a job can't have the same tag multiple times
         # and allows for efficient querying of job-tag relationships
-        {'sqlite_autoincrement': True},
+        {"sqlite_autoincrement": True},
     )

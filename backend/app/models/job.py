@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, Date, JSON
-from sqlalchemy.orm import relationship
 from datetime import datetime
 
 from app.core.db import Base
+from sqlalchemy import JSON, Column, Date, Integer, String
+from sqlalchemy.orm import relationship
+
 
 class Job(Base):
     __tablename__ = "jobs"
