@@ -33,7 +33,11 @@
       "Big-Data",
       "Analytics",
       "AI",
-      "Cybersecurity"
+      "Cybersecurity",
+      "UI-Development",
+      "Web-Development",
+      "Infrastructure",
+      "User-Experience"
     ],
     "methodology": [
       "Agile",
@@ -47,16 +51,6 @@
       "Strategy",
       "Roadmapping"
     ],
-    "tool": [
-      "Figma",
-      "Git",
-      "Jira",
-      "Confluence",
-      "Docker",
-      "Kubernetes",
-      "AWS",
-      "Azure",
-      "GCP"
-    ]
+    "tool": ["Figma", "Git", "Jira", "Confluence", "Azure", "GCP"]
   }
 }
