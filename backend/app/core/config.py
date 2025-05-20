@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from pydantic_settings import BaseSettings
 
@@ -12,9 +13,13 @@ class Settings(BaseSettings):
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/job_board"
     )
+    POSTGRES_USER: str = os.getenv("POSTGRES_USER", "postgres")
+    POSTGRES_PASSWORD: str = os.getenv("POSTGRES_PASSWORD", "postgres")
 
     # CORS settings
-    BACKEND_CORS_ORIGINS: list = ["*"]
+    BACKEND_CORS_ORIGINS: List[str] = os.getenv(
+        "BACKEND_CORS_ORIGINS", ["http://localhost:5173", "http://127.0.0.1:5173"]
+    ).split(",")
 
     # JWT settings
     SECRET_KEY: str = os.getenv("SECRET_KEY", "secret_key_for_development")
