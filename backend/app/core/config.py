@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # CORS settings
     BACKEND_CORS_ORIGINS: List[str] = os.getenv(
         "BACKEND_CORS_ORIGINS", ["http://localhost:5173", "http://127.0.0.1:5173"]
-    ).split(",")
+    )
 
     # JWT settings
     SECRET_KEY: str = os.getenv("SECRET_KEY", "secret_key_for_development")
