@@ -60,18 +60,18 @@ const JobListingPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="mb-10">
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
+    <div className="w-full bg-gray-50">
+      <div className="w-full max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        <div className="mb-8 sm:mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-2 sm:mb-4">
             Find Your Next Tech Job
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl">
+          <p className="text-lg sm:text-xl text-gray-600 max-w-3xl">
             Browse through hundreds of tech opportunities from top companies
           </p>
         </div>
 
-        <div className="mb-10">
+        <div className="mb-8 sm:mb-10">
           <JobSearch onSearch={handleSearch} isLoading={loading} />
         </div>
 
@@ -100,17 +100,17 @@ const JobListingPage: React.FC = () => {
         )}
 
         <div className="bg-white shadow-sm rounded-xl overflow-hidden border border-gray-200">
-          <div className="p-6">
+          <div className="p-4 sm:p-6">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-20">
-                <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-                <p className="mt-4 text-lg font-medium text-gray-700">
+              <div className="flex flex-col items-center justify-center py-16 sm:py-20">
+                <div className="inline-block h-10 w-10 sm:h-12 sm:w-12 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+                <p className="mt-4 text-base sm:text-lg font-medium text-gray-700">
                   Loading jobs...
                 </p>
               </div>
             ) : jobs.length > 0 ? (
               <div>
-                <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 pb-4 border-b border-gray-200 gap-2">
                   <div className="text-gray-700">
                     <span className="font-medium">{pagination.total}</span> jobs
                     found
@@ -128,7 +128,7 @@ const JobListingPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 sm:space-y-6">
                   {jobs.map((job) => (
                     <JobCard key={job.job_id} job={job} />
                   ))}
@@ -141,9 +141,9 @@ const JobListingPage: React.FC = () => {
                 />
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="flex flex-col items-center justify-center py-16 sm:py-20 text-center">
                 <svg
-                  className="h-16 w-16 text-gray-400 mb-4"
+                  className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mb-4"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"

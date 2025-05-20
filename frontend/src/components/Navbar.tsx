@@ -1,12 +1,21 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Helper function to determine if a path is active
+  const isActive = (path: string) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(path);
+  };
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <nav className="bg-white shadow-sm border-b border-gray-200 w-full">
+      <div className="w-full max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
@@ -33,19 +42,21 @@ const Navbar: React.FC = () => {
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
                 to="/"
-                className="border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                className={`${
+                  isActive("/")
+                    ? "border-blue-500 text-gray-900"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
                 Jobs
               </Link>
               <Link
-                to="/categories"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
-              >
-                Categories
-              </Link>
-              <Link
                 to="/companies"
-                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                className={`${
+                  isActive("/companies")
+                    ? "border-blue-500 text-gray-900"
+                    : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
                 Companies
               </Link>
@@ -106,23 +117,25 @@ const Navbar: React.FC = () => {
       </div>
 
       {isMenuOpen && (
-        <div className="sm:hidden">
+        <div className="sm:hidden w-full">
           <div className="pt-2 pb-3 space-y-1">
             <Link
               to="/"
-              className="bg-blue-50 border-blue-500 text-blue-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+              className={`${
+                isActive("/")
+                  ? "bg-blue-50 border-blue-500 text-blue-700"
+                  : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
               Jobs
             </Link>
             <Link
-              to="/categories"
-              className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
-            >
-              Categories
-            </Link>
-            <Link
               to="/companies"
-              className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+              className={`${
+                isActive("/companies")
+                  ? "bg-blue-50 border-blue-500 text-blue-700"
+                  : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+              } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
               Companies
             </Link>

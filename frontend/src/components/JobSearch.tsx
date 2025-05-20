@@ -76,18 +76,18 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-xl overflow-hidden">
-      <div className="px-6 py-8 md:px-10 md:py-12">
-        <h2 className="text-2xl md:text-3xl font-bold text-white mb-2">
+    <div className="w-full bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-xl overflow-hidden">
+      <div className="px-4 py-6 sm:px-6 md:px-8 lg:px-10 md:py-8 lg:py-10">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 sm:mb-2">
           Find Your Dream Job
         </h2>
-        <p className="text-blue-100 mb-8">
+        <p className="text-sm sm:text-base text-blue-100 mb-4 sm:mb-6 md:mb-8">
           Search through thousands of jobs from top companies
         </p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1">
+        <form onSubmit={handleSubmit} className="w-full">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="w-full sm:flex-1">
               <div className="relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
@@ -109,11 +109,11 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Job title, company, or keyword"
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-3 text-base border-gray-300 rounded-md"
+                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-2 sm:py-3 text-sm sm:text-base border-gray-300 rounded-md"
                 />
               </div>
             </div>
-            <div className="flex-1">
+            <div className="w-full sm:flex-1">
               <div className="relative rounded-md shadow-sm">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <svg
@@ -135,21 +135,21 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="City, state, or 'Remote'"
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-3 text-base border-gray-300 rounded-md"
+                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-2 sm:py-3 text-sm sm:text-base border-gray-300 rounded-md"
                 />
               </div>
             </div>
             <button
               type="submit"
               disabled={isLoading}
-              className={`inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white ${
+              className={`w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-md shadow-sm text-white ${
                 isLoading ? "bg-blue-400" : "bg-blue-900 hover:bg-blue-950"
               } transition-colors duration-150 ease-in-out`}
             >
               {isLoading ? (
                 <>
                   <svg
-                    className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                    className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -173,7 +173,7 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
               ) : (
                 <>
                   <svg
-                    className="mr-2 h-5 w-5"
+                    className="mr-2 h-4 w-4 sm:h-5 sm:w-5"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -194,12 +194,12 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
             <button
               type="button"
               onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
-              className="text-blue-100 hover:text-white text-sm flex items-center focus:outline-none transition-colors duration-150 ease-in-out"
+              className="text-blue-100 hover:text-white text-xs sm:text-sm flex items-center focus:outline-none transition-colors duration-150 ease-in-out"
             >
               {isAdvancedSearchOpen ? (
                 <>
                   <svg
-                    className="mr-1 h-4 w-4"
+                    className="mr-1 h-3 w-3 sm:h-4 sm:w-4"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -215,7 +215,7 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
               ) : (
                 <>
                   <svg
-                    className="mr-1 h-4 w-4"
+                    className="mr-1 h-3 w-3 sm:h-4 sm:w-4"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -233,19 +233,19 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
           </div>
 
           {isAdvancedSearchOpen && tagCategories.length > 0 && (
-            <div className="bg-white rounded-lg p-4 mt-4 shadow-inner">
-              <div className="mb-4">
-                <p className="text-sm font-medium text-gray-700 mb-2">
+            <div className="bg-white rounded-lg p-3 sm:p-4 mt-3 sm:mt-4 shadow-inner">
+              <div className="mb-3 sm:mb-4">
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
                   Filter by tags:
                 </p>
 
-                <div className="flex flex-wrap border-b border-gray-200 mb-3 gap-x-4">
+                <div className="flex flex-wrap border-b border-gray-200 mb-2 sm:mb-3 gap-x-3 sm:gap-x-4 overflow-x-auto whitespace-nowrap pb-1">
                   {tagCategories.map((category) => (
                     <button
                       key={category}
                       type="button"
                       onClick={() => setActiveCategory(category)}
-                      className={`py-2 text-sm font-medium transition-colors ${
+                      className={`py-1 sm:py-2 text-xs sm:text-sm font-medium transition-colors ${
                         activeCategory === category
                           ? "text-blue-600 border-b-2 border-blue-600"
                           : "text-gray-500 hover:text-gray-700"
@@ -257,13 +257,13 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
                 </div>
 
                 {activeCategory && availableTags[activeCategory] && (
-                  <div className="flex flex-wrap gap-2 mt-3">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3 max-h-32 sm:max-h-40 overflow-y-auto pb-1">
                     {availableTags[activeCategory].map((tag) => (
                       <button
                         key={tag}
                         type="button"
                         onClick={() => handleTagToggle(tag)}
-                        className={`text-sm px-3 py-1.5 rounded-full transition-colors ${
+                        className={`text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition-colors ${
                           selectedTags.includes(tag)
                             ? "bg-blue-600 text-white"
                             : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -277,9 +277,9 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
               </div>
 
               {selectedTags.length > 0 && (
-                <div className="mt-4">
+                <div className="mt-3 sm:mt-4">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-gray-700">
+                    <p className="text-xs sm:text-sm font-medium text-gray-700">
                       Selected filters:
                     </p>
                     <button
@@ -290,17 +290,17 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
                       Clear all
                     </button>
                   </div>
-                  <div className="flex flex-wrap gap-2 mt-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
                     {selectedTags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                        className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
                       >
                         {tag.replace(/-/g, " ")}
                         <button
                           type="button"
                           onClick={() => handleTagToggle(tag)}
-                          className="flex-shrink-0 ml-1 h-4 w-4 rounded-full inline-flex items-center justify-center text-blue-600 hover:text-blue-800 focus:outline-none"
+                          className="flex-shrink-0 ml-1 h-3 w-3 sm:h-4 sm:w-4 rounded-full inline-flex items-center justify-center text-blue-600 hover:text-blue-800 focus:outline-none"
                         >
                           <span className="sr-only">Remove filter</span>
                           <svg
