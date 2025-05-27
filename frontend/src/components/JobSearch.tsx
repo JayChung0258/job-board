@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { JobSearchParams } from "../types/job";
-import { getTagCategories, getTagsByCategory } from "../api/jobsApi";
 
 interface JobSearchProps {
   onSearch: (params: JobSearchParams) => void;
@@ -10,86 +9,35 @@ interface JobSearchProps {
 const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [availableTags, setAvailableTags] = useState<Record<string, string[]>>(
-    {},
-  );
-  const [tagCategories, setTagCategories] = useState<string[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>("");
-  const [isAdvancedSearchOpen, setIsAdvancedSearchOpen] = useState(false);
-
-  useEffect(() => {
-    // Load tag categories when component mounts
-    const loadTagCategories = async () => {
-      try {
-        const categories = await getTagCategories();
-        setTagCategories(categories);
-        if (categories.length > 0) {
-          setActiveCategory(categories[0]);
-        }
-      } catch (error) {
-        console.error("Failed to load tag categories:", error);
-      }
-    };
-
-    loadTagCategories();
-  }, []);
-
-  useEffect(() => {
-    // Load tags for active category
-    if (activeCategory) {
-      const loadTags = async () => {
-        try {
-          const tags = await getTagsByCategory(activeCategory);
-          setAvailableTags((prevTags) => ({
-            ...prevTags,
-            [activeCategory]: tags,
-          }));
-        } catch (error) {
-          console.error(`Failed to load tags for ${activeCategory}:`, error);
-        }
-      };
-
-      if (!availableTags[activeCategory]) {
-        loadTags();
-      }
-    }
-  }, [activeCategory, availableTags]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch({
       query,
       location,
-      tags: selectedTags.length > 0 ? selectedTags : undefined,
       page: 1,
       limit: 10,
     });
   };
 
-  const handleTagToggle = (tag: string) => {
-    if (selectedTags.includes(tag)) {
-      setSelectedTags(selectedTags.filter((t) => t !== tag));
-    } else {
-      setSelectedTags([...selectedTags, tag]);
-    }
-  };
-
   return (
-    <div className="w-full bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-xl overflow-hidden">
-      <div className="px-4 py-6 sm:px-6 md:px-8 lg:px-10 md:py-8 lg:py-10">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-1 sm:mb-2">
-          Find Your Dream Job
-        </h2>
-        <p className="text-sm sm:text-base text-blue-100 mb-4 sm:mb-6 md:mb-8">
-          Search through thousands of jobs from top companies
-        </p>
+    <div className="w-full bg-white">
+      <div className="w-full max-w-[2000px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Find Your Dream Job
+          </h1>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Browse thousands of job listings from top companies and find the
+            perfect role for your skills and experience.
+          </p>
+        </div>
 
-        <form onSubmit={handleSubmit} className="w-full">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="w-full sm:flex-1">
-              <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+        <form onSubmit={handleSubmit} className="w-full max-w-4xl mx-auto">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-0 bg-white rounded-lg shadow-lg border border-gray-200 p-1">
+            <div className="flex-1">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg
                     className="h-5 w-5 text-gray-400"
                     xmlns="http://www.w3.org/2000/svg"
@@ -108,14 +56,14 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
                   type="text"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Job title, company, or keyword"
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-2 sm:py-3 text-sm sm:text-base border-gray-300 rounded-md"
+                  placeholder="Job title, keywords, or company"
+                  className="w-full pl-12 pr-4 py-4 text-base border-0 rounded-l-lg bg-white text-black caret-black focus:ring-0 focus:outline-none"
                 />
               </div>
             </div>
-            <div className="w-full sm:flex-1">
-              <div className="relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <div className="flex-1 border-l border-gray-200">
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <svg
                     className="h-5 w-5 text-gray-400"
                     xmlns="http://www.w3.org/2000/svg"
@@ -134,22 +82,22 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="City, state, or 'Remote'"
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-3 py-2 sm:py-3 text-sm sm:text-base border-gray-300 rounded-md"
+                  placeholder="Location"
+                  className="w-full pl-12 pr-4 py-4 text-base border-0 rounded-l-lg bg-white text-black caret-black focus:ring-0 focus:outline-none"
                 />
               </div>
             </div>
             <button
               type="submit"
               disabled={isLoading}
-              className={`w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-2 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-md shadow-sm text-white ${
-                isLoading ? "bg-blue-400" : "bg-blue-900 hover:bg-blue-950"
+              className={`px-8 py-4 border-0 text-base font-medium rounded-r-lg text-white ${
+                isLoading ? "bg-gray-400" : "bg-gray-900 hover:bg-gray-800"
               } transition-colors duration-150 ease-in-out`}
             >
               {isLoading ? (
                 <>
                   <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 sm:h-5 sm:w-5 text-white"
+                    className="animate-spin -ml-1 mr-2 h-5 w-5 text-white inline"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -171,158 +119,10 @@ const JobSearch: React.FC<JobSearchProps> = ({ onSearch, isLoading }) => {
                   Searching...
                 </>
               ) : (
-                <>
-                  <svg
-                    className="mr-2 h-4 w-4 sm:h-5 sm:w-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Search Jobs
-                </>
+                "Search Jobs"
               )}
             </button>
           </div>
-
-          <div className="flex justify-center mb-2">
-            <button
-              type="button"
-              onClick={() => setIsAdvancedSearchOpen(!isAdvancedSearchOpen)}
-              className="text-blue-100 hover:text-white text-xs sm:text-sm flex items-center focus:outline-none transition-colors duration-150 ease-in-out"
-            >
-              {isAdvancedSearchOpen ? (
-                <>
-                  <svg
-                    className="mr-1 h-3 w-3 sm:h-4 sm:w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Hide advanced filters
-                </>
-              ) : (
-                <>
-                  <svg
-                    className="mr-1 h-3 w-3 sm:h-4 sm:w-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  Show advanced filters
-                </>
-              )}
-            </button>
-          </div>
-
-          {isAdvancedSearchOpen && tagCategories.length > 0 && (
-            <div className="bg-white rounded-lg p-3 sm:p-4 mt-3 sm:mt-4 shadow-inner">
-              <div className="mb-3 sm:mb-4">
-                <p className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                  Filter by tags:
-                </p>
-
-                <div className="flex flex-wrap border-b border-gray-200 mb-2 sm:mb-3 gap-x-3 sm:gap-x-4 overflow-x-auto whitespace-nowrap pb-1">
-                  {tagCategories.map((category) => (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => setActiveCategory(category)}
-                      className={`py-1 sm:py-2 text-xs sm:text-sm font-medium transition-colors ${
-                        activeCategory === category
-                          ? "text-blue-600 border-b-2 border-blue-600"
-                          : "text-gray-500 hover:text-gray-700"
-                      }`}
-                    >
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </button>
-                  ))}
-                </div>
-
-                {activeCategory && availableTags[activeCategory] && (
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2 sm:mt-3 max-h-32 sm:max-h-40 overflow-y-auto pb-1">
-                    {availableTags[activeCategory].map((tag) => (
-                      <button
-                        key={tag}
-                        type="button"
-                        onClick={() => handleTagToggle(tag)}
-                        className={`text-xs sm:text-sm px-2 sm:px-3 py-1 sm:py-1.5 rounded-full transition-colors ${
-                          selectedTags.includes(tag)
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                        }`}
-                      >
-                        {tag.replace(/-/g, " ")}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {selectedTags.length > 0 && (
-                <div className="mt-3 sm:mt-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs sm:text-sm font-medium text-gray-700">
-                      Selected filters:
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedTags([])}
-                      className="text-xs text-blue-600 hover:text-blue-800"
-                    >
-                      Clear all
-                    </button>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
-                    {selectedTags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-flex items-center px-2 sm:px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                      >
-                        {tag.replace(/-/g, " ")}
-                        <button
-                          type="button"
-                          onClick={() => handleTagToggle(tag)}
-                          className="flex-shrink-0 ml-1 h-3 w-3 sm:h-4 sm:w-4 rounded-full inline-flex items-center justify-center text-blue-600 hover:text-blue-800 focus:outline-none"
-                        >
-                          <span className="sr-only">Remove filter</span>
-                          <svg
-                            className="h-2 w-2"
-                            stroke="currentColor"
-                            fill="none"
-                            viewBox="0 0 8 8"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeWidth="1.5"
-                              d="M1 1l6 6m0-6L1 7"
-                            />
-                          </svg>
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
         </form>
       </div>
     </div>
