@@ -6,6 +6,12 @@ interface PaginationProps {
   onPageChange: (page: number) => void;
 }
 
+/**
+ * Modern Pagination Component
+ *
+ * Clean, accessible pagination with smooth transitions and clear visual hierarchy.
+ * Features ellipsis for large page ranges and disabled states for navigation.
+ */
 const Pagination: React.FC<PaginationProps> = ({
   currentPage,
   totalPages,
@@ -15,10 +21,10 @@ const Pagination: React.FC<PaginationProps> = ({
 
   const generatePageNumbers = () => {
     const pages = [];
-    const maxVisiblePages = 5;
+    const maxVisiblePages = 7; // Increased for better UX
 
     if (totalPages <= maxVisiblePages) {
-      // Show all pages if we have 5 or fewer
+      // Show all pages if we have 7 or fewer
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
@@ -27,12 +33,12 @@ const Pagination: React.FC<PaginationProps> = ({
       pages.push(1);
 
       // Calculate start and end for visible page numbers
-      let startPage = Math.max(2, currentPage - 1);
-      let endPage = Math.min(totalPages - 1, startPage + 2);
+      let startPage = Math.max(2, currentPage - 2);
+      let endPage = Math.min(totalPages - 1, startPage + 3);
 
       // Adjust if we're too close to the end
       if (endPage === totalPages - 1) {
-        startPage = Math.max(2, endPage - 2);
+        startPage = Math.max(2, endPage - 3);
       }
 
       // Add ellipsis after first page if needed
@@ -51,7 +57,9 @@ const Pagination: React.FC<PaginationProps> = ({
       }
 
       // Always show last page
-      pages.push(totalPages);
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
     }
 
     return pages;
@@ -72,90 +80,123 @@ const Pagination: React.FC<PaginationProps> = ({
   const pageNumbers = generatePageNumbers();
 
   return (
-    <nav className="flex justify-center mt-10" aria-label="Pagination">
-      <div className="relative z-0 inline-flex shadow-sm rounded-md -space-x-px">
+    <div className="flex flex-col items-center space-y-4 mt-12 mb-8">
+      {/* Page info */}
+      <div className="text-sm text-gray-600 font-medium">
+        Page <span className="text-gray-900">{currentPage}</span> of{" "}
+        <span className="text-gray-900">{totalPages}</span>
+      </div>
+
+      {/* Pagination controls */}
+      <nav className="flex items-center space-x-2" aria-label="Pagination">
+        {/* Previous button */}
         <button
           onClick={handlePrevious}
           disabled={currentPage === 1}
-          className={`relative inline-flex items-center px-4 py-2 border ${
+          className={`group relative flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
             currentPage === 1
-              ? "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          } text-sm font-medium rounded-l-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          }`}
           aria-label="Previous page"
         >
           <svg
-            className="h-5 w-5 mr-1"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+            className="h-4 w-4 mr-2 transition-transform group-hover:-translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
             aria-hidden="true"
           >
             <path
-              fillRule="evenodd"
-              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-              clipRule="evenodd"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 19l-7-7 7-7"
             />
           </svg>
           Previous
         </button>
 
-        {pageNumbers.map((page, index) => {
-          if (page === "ellipsis1" || page === "ellipsis2") {
+        {/* Page numbers */}
+        <div className="flex items-center space-x-1">
+          {pageNumbers.map((page, index) => {
+            if (page === "ellipsis1" || page === "ellipsis2") {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="flex items-center justify-center w-10 h-10 text-gray-500 font-medium"
+                  aria-hidden="true"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <circle cx="4" cy="10" r="1.5" />
+                    <circle cx="10" cy="10" r="1.5" />
+                    <circle cx="16" cy="10" r="1.5" />
+                  </svg>
+                </span>
+              );
+            }
+
             return (
-              <span
-                key={`ellipsis-${index}`}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700"
+              <button
+                key={`page-${page}`}
+                onClick={() => onPageChange(Number(page))}
+                className={`relative flex items-center justify-center w-10 h-10 text-sm font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                  currentPage === page
+                    ? "bg-blue-600 text-white shadow-lg transform scale-105"
+                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow"
+                }`}
+                aria-label={`Page ${page}`}
+                aria-current={currentPage === page ? "page" : undefined}
               >
-                ...
-              </span>
+                {page}
+                {currentPage === page && (
+                  <span className="absolute inset-0 rounded-lg ring-2 ring-blue-300 ring-opacity-50"></span>
+                )}
+              </button>
             );
-          }
+          })}
+        </div>
 
-          return (
-            <button
-              key={`page-${page}`}
-              onClick={() => onPageChange(Number(page))}
-              className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors ${
-                currentPage === page
-                  ? "z-10 bg-blue-600 border-blue-600 text-white"
-                  : "bg-white border-gray-300 text-gray-700 hover:bg-gray-50"
-              }`}
-              aria-label={`Page ${page}`}
-              aria-current={currentPage === page ? "page" : undefined}
-            >
-              {page}
-            </button>
-          );
-        })}
-
+        {/* Next button */}
         <button
           onClick={handleNext}
           disabled={currentPage === totalPages}
-          className={`relative inline-flex items-center px-4 py-2 border ${
+          className={`group relative flex items-center px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
             currentPage === totalPages
-              ? "border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          } text-sm font-medium rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 transition-colors`}
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 hover:border-gray-400 shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          }`}
           aria-label="Next page"
         >
           Next
           <svg
-            className="h-5 w-5 ml-1"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+            className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-0.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
             aria-hidden="true"
           >
             <path
-              fillRule="evenodd"
-              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-              clipRule="evenodd"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
             />
           </svg>
         </button>
-      </div>
-    </nav>
+      </nav>
+
+      {/* Quick jump info for better UX */}
+      {totalPages > 10 && (
+        <div className="text-xs text-gray-500 max-w-sm text-center leading-relaxed">
+          Use the page numbers to jump quickly through results
+        </div>
+      )}
+    </div>
   );
 };
 

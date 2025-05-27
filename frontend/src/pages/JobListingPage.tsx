@@ -6,6 +6,19 @@ import JobCard from "../components/JobCard";
 import Pagination from "../components/Pagination";
 import JobFilter, { FilterState } from "../components/JobFilter";
 
+/**
+ * JobListingPage Component
+ *
+ * Main page component for displaying and filtering job listings.
+ * Provides search functionality, advanced filtering, and pagination.
+ *
+ * Features:
+ * - Job search with query and location
+ * - Dynamic tag-based filtering
+ * - Salary range filtering
+ * - Pagination support
+ * - Responsive design
+ */
 const JobListingPage: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,11 +39,19 @@ const JobListingPage: React.FC = () => {
     salaryFilterActive: false,
   });
 
+  /**
+   * Handles search form submission
+   * @param params - Search parameters including query, location, pagination
+   */
   const handleSearch = async (params: JobSearchParams) => {
     setSearchParams(params);
     await fetchJobs(params);
   };
 
+  /**
+   * Converts filter state to API search parameters and applies them
+   * @param filters - Current filter state from JobFilter component
+   */
   const handleFilterApply = (filters: FilterState) => {
     setActiveFilters(filters);
 
@@ -64,9 +85,9 @@ const JobListingPage: React.FC = () => {
 
     // Add salary filtering if active
     if (filters.salaryFilterActive) {
-      // Convert salary range to API parameters (you may need to adjust these based on your backend)
-      (newParams as any).salary_min = filters.salaryRange[0] * 1000; // Convert from k to actual salary
-      (newParams as any).salary_max = filters.salaryRange[1] * 1000;
+      // Convert salary range from thousands to actual values (50k → 50000)
+      newParams.salary_min = filters.salaryRange[0] * 1000;
+      newParams.salary_max = filters.salaryRange[1] * 1000;
     }
 
     console.log("Applying filters with params:", newParams);
@@ -74,6 +95,9 @@ const JobListingPage: React.FC = () => {
     fetchJobs(newParams);
   };
 
+  /**
+   * Resets all filters to default state while preserving search query
+   */
   const handleFilterReset = () => {
     const resetFilters: FilterState = {
       selectedTags: {},
@@ -101,6 +125,10 @@ const JobListingPage: React.FC = () => {
     fetchJobs(newParams);
   };
 
+  /**
+   * Handles pagination changes and scrolls to top
+   * @param page - Target page number
+   */
   const handlePageChange = (page: number) => {
     const newParams = { ...searchParams, page };
     setSearchParams(newParams);
@@ -109,6 +137,11 @@ const JobListingPage: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /**
+   * Fetches jobs from API with current search parameters
+   * Handles loading states and error management
+   * @param params - Search parameters to send to API
+   */
   const fetchJobs = async (params: JobSearchParams) => {
     setLoading(true);
     setError(null);
