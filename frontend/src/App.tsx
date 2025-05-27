@@ -4,7 +4,6 @@ import JobListingPage from "./pages/JobListingPage";
 import CompaniesPage from "./pages/CompaniesPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import "./App.css";
 
 const App: React.FC = () => {
   return (
