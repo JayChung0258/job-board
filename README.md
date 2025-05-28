@@ -1,6 +1,8 @@
 # Job Board - Full Stack Application
 
 This project is a full-stack job board application featuring a FastAPI backend and a React (with Vite and TypeScript) frontend.
+![image](https://github.com/user-attachments/assets/2227f6b1-ac63-4eba-b27a-8fe140e584a1)
+
 
 ## Table of Contents
 
