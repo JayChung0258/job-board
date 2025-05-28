@@ -133,7 +133,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
 
           <div className="flex items-center space-x-1">
             <button
-              className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors duration-200"
+              className="p-1.5 text-gray-400 hover:text-red-500 bg-white hover:bg-red-50 rounded-md transition-colors duration-200 border border-gray-200"
               title="Save job"
             >
               <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
@@ -141,7 +141,7 @@ const JobCard: React.FC<JobCardProps> = ({ job }) => {
               </svg>
             </button>
             <button
-              className="p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-md transition-colors duration-200"
+              className="p-1.5 text-gray-400 hover:text-blue-500 bg-white hover:bg-blue-50 rounded-md transition-colors duration-200 border border-gray-200"
               title="Share job"
             >
               <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">

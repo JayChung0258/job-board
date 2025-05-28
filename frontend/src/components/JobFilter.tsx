@@ -174,7 +174,7 @@ const JobFilter: React.FC<JobFilterProps> = ({
       </button>
       <div
         className={`overflow-hidden transition-all duration-500 ease-in-out ${
-          openSections[id] ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          openSections[id] ? "max-h-1000 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
         <div
@@ -266,7 +266,7 @@ const JobFilter: React.FC<JobFilterProps> = ({
             <div
               className={`overflow-hidden transition-all duration-500 ease-in-out ${
                 filters.salaryFilterActive
-                  ? "max-h-64 opacity-100"
+                  ? "max-h-1000 opacity-100"
                   : "max-h-0 opacity-0"
               }`}
             >
