@@ -22,7 +22,7 @@ const Navbar: React.FC = () => {
               <Link to="/" className="flex items-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-blue-600"
+                  className="h-8 w-8 text-gray-900"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -44,7 +44,7 @@ const Navbar: React.FC = () => {
                 to="/"
                 className={`${
                   isActive("/")
-                    ? "border-blue-500 text-gray-900"
+                    ? "border-gray-900 text-gray-900"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
@@ -54,7 +54,7 @@ const Navbar: React.FC = () => {
                 to="/companies"
                 className={`${
                   isActive("/companies")
-                    ? "border-blue-500 text-gray-900"
+                    ? "border-gray-900 text-gray-900"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
                 } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
               >
@@ -65,7 +65,7 @@ const Navbar: React.FC = () => {
           <div className="hidden sm:ml-6 sm:flex sm:items-center">
             <button
               type="button"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
+              className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
             >
               Post a Job
             </button>
@@ -74,7 +74,7 @@ const Navbar: React.FC = () => {
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               type="button"
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
               aria-expanded="false"
             >
               <span className="sr-only">Open main menu</span>
@@ -123,7 +123,7 @@ const Navbar: React.FC = () => {
               to="/"
               className={`${
                 isActive("/")
-                  ? "bg-blue-50 border-blue-500 text-blue-700"
+                  ? "bg-gray-100 border-gray-900 text-gray-900"
                   : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
@@ -133,7 +133,7 @@ const Navbar: React.FC = () => {
               to="/companies"
               className={`${
                 isActive("/companies")
-                  ? "bg-blue-50 border-blue-500 text-blue-700"
+                  ? "bg-gray-100 border-gray-900 text-gray-900"
                   : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
               } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
             >
@@ -142,7 +142,7 @@ const Navbar: React.FC = () => {
             <div className="mt-4 pl-3 pr-4">
               <button
                 type="button"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
+                className="w-full bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
               >
                 Post a Job
               </button>

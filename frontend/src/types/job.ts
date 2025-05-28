@@ -34,6 +34,8 @@ export interface JobSearchParams {
   tag_categories?: string[];
   date_from?: string;
   date_to?: string;
+  salary_min?: number;
+  salary_max?: number;
   page?: number;
   limit?: number;
 }
