@@ -1,6 +1,6 @@
 # backendTest.yml
 
-name: Backend Test Workflow  # ← PR 上會顯示這個名稱
+name: Backend Test Workflow
 
 on:
   push:
@@ -22,9 +22,11 @@ jobs:
           python-version: '3.11.7'
 
       - name: Install dependencies
+        working-directory: ./backend
         run: |
           pip install -r requirements.txt
 
       - name: Run tests
+        working-directory: ./backend
         run: |
-          pytest
+          pytest tests/ -v
