@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app.core.db import Base
-from sqlalchemy import Column, DateTime, ForeignKey, Integer
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 
@@ -17,9 +17,8 @@ class JobTag(Base):
     job = relationship("Job", foreign_keys=[job_id], back_populates="tag_relations")
     tag = relationship("Tag", foreign_keys=[tag_id], back_populates="job_relations")
 
-    # Composite unique constraint
+    # Composite unique constraint to prevent duplicate job-tag relationships
     __table_args__ = (
-        # This ensures a job can't have the same tag multiple times
-        # and allows for efficient querying of job-tag relationships
+        UniqueConstraint("job_id", "tag_id", name="unique_job_tag"),
         {"sqlite_autoincrement": True},
     )
