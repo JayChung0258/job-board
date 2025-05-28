@@ -234,11 +234,11 @@ def generate_mock_jobs(num_jobs=500):
 
 
 def save_mock_jobs(jobs):
-    """Save mock jobs to mock_jobs_500.json"""
+    """Save mock jobs to mock_jobs.json"""
     output = {"jobs": jobs}
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    output_path = os.path.join(script_dir, "mock_jobs_500.json")
+    output_path = os.path.join(script_dir, "mock_jobs.json")
 
     with open(output_path, "w") as f:
         json.dump(output, f, indent=2)
@@ -452,7 +452,7 @@ def reset_and_import(num_jobs=500, skip_generate=False):
 
         # Load data files
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        mock_jobs_path = os.path.join(script_dir, "mock_jobs_500.json")
+        mock_jobs_path = os.path.join(script_dir, "mock_jobs.json")
         tags_path = os.path.join(script_dir, "tags.json")
 
         with open(mock_jobs_path, "r") as f:

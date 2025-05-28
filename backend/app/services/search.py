@@ -35,7 +35,7 @@ class SearchService:
 
         # Tag filters
         if params.tags:
-            query = query.join(Job.tag_relations).join(Tag)
+            query = query.join(Job.tag_relations).join(Tag).distinct()
 
             if params.tags:
                 query = query.filter(Tag.name.in_(params.tags))
