@@ -1,0 +1,186 @@
+@startuml Job Board Business Logic - Final Architecture
+
+!define RECTANGLE class
+
+' Core Business Models
+package "Models" {
+    RECTANGLE Job {
+        +job_id: str
+        +job_position: str
+        +job_link: str
+        +company_name: str
+        +job_location: str
+        +job_posting_date: date
+        +created_at: datetime
+        +updated_at: datetime
+        +tag_relations: List[JobTag]
+    }
+
+    RECTANGLE Tag {
+        +id: int
+        +name: str
+        +category: TagCategory
+        +created_at: datetime
+        +updated_at: datetime
+        +job_relations: List[JobTag]
+    }
+
+    RECTANGLE JobTag {
+        +job_id: int
+        +tag_id: int
+        +job: Job
+        +tag: Tag
+    }
+
+    enum TagCategory {
+        TECHNOLOGY
+        SKILL
+        INDUSTRY
+        EXPERIENCE_LEVEL
+        EMPLOYMENT_TYPE
+        LOCATION_TYPE
+    }
+}
+
+' Data Access Layer (Managers)
+package "Managers" {
+    RECTANGLE JobManager {
+        +db: Session
+        +find_by_id(job_id: str): Optional[Job]
+        +find_by_filters(...): List[Job]
+        +count_by_filters(...): int
+        +create(job_data: Dict): Job
+        +update(job_id: str, job_data: Dict): Optional[Job]
+        +delete(job_id: str): bool
+        -_apply_filters(...): Query
+    }
+
+    RECTANGLE TagManager {
+        +db: Session
+        +find_by_name_and_category(name: str, category: TagCategory): Optional[Tag]
+        +find_by_category(category: TagCategory): List[Tag]
+        +get_all_categories(): List[TagCategory]
+        +create(tag_data: Dict): Tag
+        +update(tag_id: int, tag_data: Dict): Optional[Tag]
+        +delete(tag_id: int): bool
+    }
+
+    RECTANGLE JobTagManager {
+        +db: Session
+        +find_by_job_id(job_id: int): List[JobTag]
+        +find_by_tag_id(tag_id: int): List[JobTag]
+        +create_relationship(job_id: int, tag_id: int): JobTag
+        +delete_relationship(job_id: int, tag_id: int): bool
+        +delete_all_for_job(job_id: int): bool
+    }
+}
+
+' Business Logic Layer (Services)
+package "Services" {
+    RECTANGLE SearchService {
+        +job_manager: JobManager
+        +tag_manager: TagManager
+        +job_tag_manager: JobTagManager
+        +search_jobs(params: JobSearchFilter): Dict
+        +get_job_by_id(job_id: str): Dict
+        -_build_job_responses(jobs: List[Job]): List[Dict]
+        -_format_job_response(job: Job): Dict
+        -_calculate_pages(total: int, limit: int): int
+    }
+
+    RECTANGLE TagService {
+        +tag_manager: TagManager
+        +get_tag_categories(): List[str]
+        +get_tags_by_category(category: str): List[Dict]
+        -_format_tag_response(tag: Tag): Dict
+    }
+}
+
+' API Layer
+package "API" {
+    RECTANGLE JobsAPI {
+        +search_jobs(params: JobSearchFilter, search_service: SearchService): Dict
+        +get_job(job_id: str, search_service: SearchService): Dict
+    }
+
+    RECTANGLE TagsAPI {
+        +get_tag_categories(tag_service: TagService): List[str]
+        +get_tags_by_category(category: str, tag_service: TagService): List[Dict]
+    }
+}
+
+' Schemas
+package "Schemas" {
+    RECTANGLE JobSearchFilter {
+        +query: Optional[str]
+        +location: Optional[str]
+        +tags: List[str]
+        +tag_categories: List[str]
+        +date_from: Optional[date]
+        +date_to: Optional[date]
+        +page: int
+        +limit: int
+    }
+}
+
+' Dependency Injection
+package "Dependencies" {
+    RECTANGLE Dependencies {
+        +get_job_manager(db: Session): JobManager
+        +get_tag_manager(db: Session): TagManager
+        +get_job_tag_manager(db: Session): JobTagManager
+        +get_search_service(...): SearchService
+        +get_tag_service(tag_manager: TagManager): TagService
+    }
+}
+
+' Relationships
+Job ||--o{ JobTag : "has many"
+Tag ||--o{ JobTag : "has many"
+Tag ||-- TagCategory : "belongs to"
+
+JobManager --> Job : "manages"
+TagManager --> Tag : "manages"
+JobTagManager --> JobTag : "manages"
+
+SearchService --> JobManager : "uses"
+SearchService --> TagManager : "uses"
+SearchService --> JobTagManager : "uses"
+
+TagService --> TagManager : "uses"
+
+JobsAPI --> SearchService : "depends on"
+TagsAPI --> TagService : "depends on"
+
+JobsAPI --> JobSearchFilter : "uses"
+
+Dependencies --> JobManager : "creates"
+Dependencies --> TagManager : "creates"
+Dependencies --> JobTagManager : "creates"
+Dependencies --> SearchService : "creates"
+Dependencies --> TagService : "creates"
+
+note right of SearchService
+  Business logic for job search operations.
+  Coordinates between multiple managers.
+  Returns formatted dictionaries for API responses.
+end note
+
+note right of JobManager
+  Database access layer for Job entities.
+  Handles all CRUD operations and filtering.
+  Text search includes position, company, and location.
+end note
+
+note right of TagManager
+  Database access layer for Tag entities.
+  Manages tag categories and relationships.
+end note
+
+note right of Dependencies
+  Dependency injection container.
+  Wires up services with their dependencies.
+  Promotes loose coupling and testability.
+end note
+
+@enduml

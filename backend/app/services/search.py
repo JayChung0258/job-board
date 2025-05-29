@@ -1,61 +1,112 @@
+"""
+Search Service - Business logic for job search operations
+"""
+
+from typing import Dict, List
+
+from app.managers.job_manager import JobManager
+from app.managers.job_tag_manager import JobTagManager
+from app.managers.tag_manager import TagManager
 from app.models.job import Job
-from app.models.tag import Tag
 from app.schemas.job_filter import JobSearchFilter
-from sqlalchemy import or_
-from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 
 class SearchService:
-    def __init__(self, db: Session):
-        self.db = db
+    """
+    Handles business logic for job search operations.
+    Uses managers for all database interactions.
+    """
 
-    def search_jobs(self, params: JobSearchFilter):
-        query = self.db.query(Job)
+    def __init__(
+        self,
+        job_manager: JobManager,
+        tag_manager: TagManager,
+        job_tag_manager: JobTagManager,
+    ):
+        self.job_manager = job_manager
+        self.tag_manager = tag_manager
+        self.job_tag_manager = job_tag_manager
 
-        # Text search
-        if params.query:
-            search_term = f"%{params.query}%"
-            query = query.filter(
-                or_(
-                    Job.job_position.ilike(search_term),
-                    Job.company_name.ilike(search_term),
-                    Job.job_location.ilike(search_term),
-                )
-            )
+    def search_jobs(self, params: JobSearchFilter) -> Dict:
+        """
+        Search for jobs based on provided filters.
+        Returns paginated results with metadata.
+        """
+        # Calculate offset for pagination
+        offset = (params.page - 1) * params.limit
 
-        # Location filter
-        if params.location:
-            query = query.filter(Job.job_location.ilike(f"%{params.location}%"))
+        # Get total count
+        total = self.job_manager.count_by_filters(
+            query=params.query,
+            location=params.location,
+            tags=params.tags,
+            tag_categories=params.tag_categories,
+            date_from=params.date_from,
+            date_to=params.date_to,
+        )
 
-        # Date range filter
-        if params.date_from:
-            query = query.filter(Job.job_posting_date >= params.date_from)
-        if params.date_to:
-            query = query.filter(Job.job_posting_date <= params.date_to)
+        # Get paginated jobs
+        jobs = self.job_manager.find_by_filters(
+            query=params.query,
+            location=params.location,
+            tags=params.tags,
+            tag_categories=params.tag_categories,
+            date_from=params.date_from,
+            date_to=params.date_to,
+            limit=params.limit,
+            offset=offset,
+        )
 
-        # Tag filters
-        if params.tags:
-            query = query.join(Job.tag_relations).join(Tag).distinct()
-
-            if params.tags:
-                query = query.filter(Tag.name.in_(params.tags))
-
-            if params.tag_categories:
-                query = query.filter(Tag.category.in_(params.tag_categories))
-
-        # Get total count before pagination
-        total = query.count()
-
-        # Apply pagination
-        query = query.offset((params.page - 1) * params.limit).limit(params.limit)
-
-        # Execute query
-        jobs = query.all()
+        # Enrich jobs with tags and format response
+        formatted_jobs = self._build_job_responses(jobs)
 
         return {
-            "items": jobs,
+            "items": formatted_jobs,
             "total": total,
             "page": params.page,
             "limit": params.limit,
-            "pages": (total + params.limit - 1) // params.limit,
+            "pages": self._calculate_pages(total, params.limit),
         }
+
+    def get_job_by_id(self, job_id: str) -> Dict:
+        """
+        Get a specific job by its ID.
+        Raises HTTPException if job not found.
+        """
+        job = self.job_manager.find_by_id(job_id)
+        if not job:
+            raise HTTPException(
+                status_code=404, detail=f"Job with ID {job_id} not found"
+            )
+
+        return self._format_job_response(job)
+
+    def _build_job_responses(self, jobs: List[Job]) -> List[Dict]:
+        """Build formatted job responses with tags."""
+        return [self._format_job_response(job) for job in jobs]
+
+    def _format_job_response(self, job: Job) -> Dict:
+        """Format a single job for API response."""
+        # Build tags dictionary grouped by category
+        tags_by_category = {}
+        for job_tag in job.tag_relations:
+            tag = job_tag.tag
+            category = tag.category.value
+            if category not in tags_by_category:
+                tags_by_category[category] = []
+            tags_by_category[category].append(tag.name)
+
+        return {
+            "job_id": job.job_id,
+            "job_position": job.job_position,
+            "job_link": job.job_link,
+            "company_name": job.company_name,
+            "job_location": job.job_location,
+            "job_posting_date": job.job_posting_date,
+            "tags": tags_by_category,
+        }
+
+    def _calculate_pages(self, total: int, limit: int) -> int:
+        """Calculate total number of pages."""
+        return (total + limit - 1) // limit
