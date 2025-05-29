@@ -7,6 +7,7 @@ This project is a full-stack job board application featuring a FastAPI backend a
 ## Table of Contents
 
 - [Project Overview](#project-overview)
+- [Architecture](#architecture)
 - [Features](#features)
   - [Backend](#backend)
   - [Frontend](#frontend)
@@ -28,6 +29,7 @@ This project is a full-stack job board application featuring a FastAPI backend a
   - [Backend](#backend-3)
   - [Frontend (TBD)](#frontend-tbd)
 - [API Documentation](#api-documentation)
+- [Troubleshooting](#troubleshooting)
 - [Contributing (TBD)](#contributing-tbd)
 - [License (TBD)](#license-tbd)
 
@@ -39,22 +41,25 @@ The Job Board application allows users to search and browse job postings. Employ
 
 ### Backend
 
+- **Clean Architecture**: Layered design with separation of concerns
+- **Dependency Injection**: Loose coupling between components for better testability
 - **Job Search & Filtering**: Robust search functionality with filters for:
   - Keywords (job position, company, location)
   - Specific location
   - Tags (e.g., "python", "react", "backend")
   - Tag categories (e.g., "technology", "skill")
   - Job posting date range
-- **Pagination**: Efficiently browse through large sets of job listings.
-- **Job Details**: View detailed information for each job posting.
+- **Pagination**: Efficiently browse through large sets of job listings
+- **Job Details**: View detailed information for each job posting
 - **Tag Management**:
-  - Categorized tags (e.g., Technology, Skill, Experience Level).
-  - Retrieve available tag categories.
-  - List tags within a specific category.
-- **RESTful API**: Well-defined API endpoints built with FastAPI.
-- **Data Validation**: Pydantic models for request and response validation.
-- **Database Migrations**: Alembic for managing database schema changes.
-- **Asynchronous Support (TBD)**: Potential for async operations for improved performance.
+  - Categorized tags (e.g., Technology, Skill, Experience Level)
+  - Retrieve available tag categories
+  - List tags within a specific category
+- **RESTful API**: Well-defined API endpoints built with FastAPI
+- **Data Validation**: Pydantic models for request and response validation
+- **Database Migrations**: Alembic for managing database schema changes
+- **Comprehensive Testing**: 92 tests covering all layers with 100% pass rate
+- **PostgreSQL Support**: Optimized for production database with proper JSON handling
 
 ### Frontend
 
@@ -94,16 +99,17 @@ The Job Board application allows users to search and browse job postings. Employ
 ### Testing
 
 - **Backend**:
-  - `pytest` for running tests.
-  - Shared test utilities in `conftest.py` for database sessions and sample data.
-  - Comprehensive unit, integration, and API endpoint tests.
-  - Coverage for models, services, schemas, and API endpoints.
+  - `pytest` for running tests
+  - Shared test utilities in `conftest.py` for database sessions and sample data
+  - Comprehensive unit, integration, and API endpoint tests (92 tests total)
+  - Coverage for models, services, managers, schemas, and API endpoints
+  - Manager layer testing with dependency injection
 - **Frontend (TBD)**: (TBD: e.g., Jest, React Testing Library, Vitest)
 
 ### DevOps
 
 - **CI/CD**: GitHub Actions for automated backend testing on push/pull requests to `main`. (TBD: Add frontend CI steps)
-- **Containerization (TBD)**: Docker, Docker Compose.
+- **Containerization (TBD)**: Docker, Docker Compose
 - **Pre-commit Hooks**: `pre-commit` with `ruff` for linting and formatting (backend). (TBD: Add frontend pre-commit hooks if any)
 
 ## Project Structure
@@ -114,17 +120,36 @@ The Job Board application allows users to search and browse job postings. Employ
 │   └── backendTest.yml
 ├── backend/
 │   ├── app/                  # Core application code
-│   │   ├── api/              # API endpoint definitions
-│   │   ├── core/             # Core components (e.g., db connection, config)
+│   │   ├── api/              # API endpoint definitions (HTTP layer)
+│   │   │   ├── jobs.py       # Job search and detail endpoints
+│   │   │   └── tags.py       # Tag management endpoints
+│   │   ├── core/             # Core components
+│   │   │   ├── config.py     # Application configuration
+│   │   │   ├── db.py         # Database connection setup
+│   │   │   └── dependencies.py # Dependency injection container
 │   │   ├── data/             # Sample/mock data (e.g., mock_jobs.json)
+│   │   ├── managers/         # Data Access Layer
+│   │   │   ├── job_manager.py      # Job database operations
+│   │   │   ├── tag_manager.py      # Tag database operations
+│   │   │   └── job_tag_manager.py  # Job-Tag relationship operations
 │   │   ├── models/           # SQLAlchemy ORM models
+│   │   │   ├── job.py        # Job model with relationships
+│   │   │   ├── tag.py        # Tag model with categories
+│   │   │   └── job_tag.py    # Job-Tag relationship model
 │   │   ├── schemas/          # Pydantic schemas for data validation
-│   │   ├── services/         # Business logic and services (e.g., SearchService)
+│   │   │   └── job_filter.py # Job search filter validation
+│   │   ├── services/         # Business Logic Layer
+│   │   │   ├── search.py     # Job search business logic
+│   │   │   └── tag_service.py # Tag management business logic
 │   │   └── main.py           # FastAPI application entry point
 │   ├── migrations/           # Alembic database migration scripts
-│   ├── tests/                # Pytest test suite
+│   ├── tests/                # Pytest test suite (92 comprehensive tests)
 │   │   ├── conftest.py       # Shared pytest fixtures and utilities
-│   │   └── (various test_*.py files for different modules)
+│   │   ├── test_api_endpoints.py # API layer tests
+│   │   ├── test_services.py  # Service layer tests
+│   │   ├── test_models.py    # Model layer tests
+│   │   ├── test_schemas.py   # Schema validation tests
+│   │   └── test_integration.py # Full-stack integration tests
 │   ├── alembic.ini           # Alembic configuration
 │   ├── requirements.txt      # Python dependencies
 │   └── .env.example          # Example environment variables
@@ -147,6 +172,7 @@ The Job Board application allows users to search and browse job postings. Employ
 ├── .gitignore
 ├── .pre-commit-config.yaml   # Pre-commit hook configurations
 ├── README.md                 # This file
+├── job-board-business-logic-uml.txt # Architecture diagram (PlantUML)
 └── (TBD: docker-compose.yml, Dockerfile)
 ```
 

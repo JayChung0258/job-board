@@ -1,15 +1,298 @@
-# Job Board API Documentation
+# Job Board Backend API
 
 ## Overview
 
-This is the backend API for the Job Board application, providing endpoints for job listings, tags, and search functionality. The API is versioned (v1) and organized into modular routers for better maintainability.
+This is the backend API for the Job Board application, built with **FastAPI and clean architecture principles**. The backend provides endpoints for job listings, tags, and advanced search functionality with a **layered architecture** that emphasizes maintainability, testability, and scalability.
+
+## Architecture & Design
+
+### **Clean Architecture Pattern**
+
+The backend follows a **clean architecture pattern** with clear separation of concerns across four distinct layers:
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      API Layer                             │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │   jobs.py       │  │   tags.py       │                 │
+│  │ (HTTP Endpoints)│  │ (HTTP Endpoints)│                 │
+│  └─────────────────┘  └─────────────────┘                 │
+├─────────────────────────────────────────────────────────────┤
+│                    Service Layer                           │
+│  ┌─────────────────┐  ┌─────────────────┐                 │
+│  │   search.py     │  │ tag_service.py  │                 │
+│  │ (Business Logic)│  │ (Business Logic)│                 │
+│  └─────────────────┘  └─────────────────┘                 │
+├─────────────────────────────────────────────────────────────┤
+│                    Manager Layer                           │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────────┐    │
+│  │job_manager.py│ │tag_manager.py│ │job_tag_manager.py│    │
+│  │(Data Access) │ │(Data Access) │ │(Relationships)   │    │
+│  └──────────────┘ └──────────────┘ └──────────────────┘    │
+├─────────────────────────────────────────────────────────────┤
+│                     Model Layer                            │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐        │
+│  │   job.py    │  │   tag.py    │  │ job_tag.py  │        │
+│  │(SQLAlchemy) │  │(SQLAlchemy) │  │(SQLAlchemy) │        │
+│  └─────────────┘  └─────────────┘  └─────────────┘        │
+└─────────────────────────────────────────────────────────────┘
+
+         ┌─────────────────────────────────────┐
+         │        Core Components              │
+         │ ┌─────────────┐ ┌─────────────────┐ │
+         │ │dependencies │ │   config.py     │ │
+         │ │    .py      │ │   db.py         │ │
+         │ │(DI Container│ │(Configuration)  │ │
+         │ └─────────────┘ └─────────────────┘ │
+         └─────────────────────────────────────┘
+```
+
+### **Design Principles**
+
+#### **1. Separation of Concerns**
+
+Each layer has a single, well-defined responsibility:
+
+- **API Layer**: HTTP request/response handling, routing, validation
+- **Service Layer**: Business logic, coordination, data transformation
+- **Manager Layer**: Database operations, queries, data persistence
+- **Model Layer**: Data entities, relationships, schema definitions
+
+#### **2. Dependency Injection**
+
+- Centralized dependency container in `core/dependencies.py`
+- Loose coupling between layers for better testability
+- Easy to mock dependencies for unit testing
+
+#### **3. Single Responsibility Principle**
+
+Each component has a focused purpose:
+
+- `JobManager`: Job database operations and queries
+- `TagManager`: Tag CRUD operations and categorization
+- `JobTagManager`: Job-Tag relationship management
+- `SearchService`: Search coordination and filtering logic
+- `TagService`: Tag business logic and validation
+
+### **Component Details**
+
+#### **API Layer** (`app/api/`)
+
+**File: `jobs.py` (55 lines)**
+
+- `GET /api/v1/jobs/search` - Advanced job search with filters
+- `GET /api/v1/jobs/{job_id}` - Get job by ID
+- Input validation using Pydantic schemas
+- HTTP status code management
+
+**File: `tags.py` (33 lines)**
+
+- `GET /api/v1/tags/categories` - Get all tag categories
+- `GET /api/v1/tags/by-category/{category}` - Get tags by category
+- RESTful endpoint design
+
+#### **Service Layer** (`app/services/`)
+
+**File: `search.py` (113 lines)**
+
+- Job search business logic and orchestration
+- Filter coordination across multiple criteria
+- Result formatting and pagination logic
+- Performance optimization for complex queries
+
+**File: `tag_service.py` (75 lines)**
+
+- Tag management business logic
+- Category validation and organization
+- Tag relationship management
+
+#### **Manager Layer** (`app/managers/`)
+
+**File: `job_manager.py` (150 lines)**
+
+- Job CRUD operations with SQLAlchemy
+- Complex filtering and search queries
+- Optimized database queries with `distinct(Job.id)`
+- Join operations with tag relationships
+
+**File: `tag_manager.py` (74 lines)**
+
+- Tag database operations
+- Category-based tag retrieval
+- Unique tag management
+
+**File: `job_tag_manager.py` (85 lines)**
+
+- Many-to-many relationship management
+- Job-Tag association operations
+- Relationship queries and filters
+
+#### **Model Layer** (`app/models/`)
+
+**File: `job.py`**
+
+```python
+class Job(Base):
+    __tablename__ = "jobs"
+
+    id = Column(Integer, primary_key=True)
+    job_id = Column(String, unique=True, index=True)
+    job_position = Column(String, index=True)
+    company_name = Column(String, index=True)
+    job_location = Column(String, index=True)
+    job_posting_date = Column(Date, index=True)
+    # ... other fields
+
+    # Relationships
+    job_tags = relationship("JobTag", back_populates="job")
+```
+
+**File: `tag.py`**
+
+```python
+class Tag(Base):
+    __tablename__ = "tags"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True, index=True)
+    category = Column(String, index=True)
+
+    # Relationships
+    job_tags = relationship("JobTag", back_populates="tag")
+```
+
+**File: `job_tag.py`**
+
+```python
+class JobTag(Base):
+    __tablename__ = "job_tags"
+
+    job_id = Column(Integer, ForeignKey("jobs.id"), primary_key=True)
+    tag_id = Column(Integer, ForeignKey("tags.id"), primary_key=True)
+
+    # Relationships
+    job = relationship("Job", back_populates="job_tags")
+    tag = relationship("Tag", back_populates="job_tags")
+```
+
+#### **Core Infrastructure** (`app/core/`)
+
+**File: `dependencies.py` (46 lines)**
+
+```python
+# Dependency injection container
+def get_job_manager(db: Session = Depends(get_db)) -> JobManager:
+    return JobManager(db)
+
+def get_search_service(
+    job_manager: JobManager = Depends(get_job_manager),
+    tag_manager: TagManager = Depends(get_tag_manager),
+    job_tag_manager: JobTagManager = Depends(get_job_tag_manager)
+) -> SearchService:
+    return SearchService(job_manager, tag_manager, job_tag_manager)
+```
+
+**File: `config.py` (33 lines)**
+
+- Environment configuration management
+- Database URL and connection settings
+- Application settings
+
+**File: `db.py` (23 lines)**
+
+- Database connection setup
+- Session management
+- Engine configuration
+
+### **Database Schema Design**
+
+```sql
+-- Optimized for search performance
+CREATE TABLE jobs (
+    id SERIAL PRIMARY KEY,
+    job_id VARCHAR UNIQUE,
+    job_position VARCHAR,
+    company_name VARCHAR,
+    job_location VARCHAR,
+    job_posting_date DATE,
+    -- Additional indexes for search optimization
+    INDEX idx_job_position (job_position),
+    INDEX idx_job_location (job_location),
+    INDEX idx_company_name (company_name),
+    INDEX idx_posting_date (job_posting_date)
+);
+
+CREATE TABLE tags (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR UNIQUE,
+    category VARCHAR,
+    INDEX idx_tag_category (category),
+    INDEX idx_tag_name (name)
+);
+
+CREATE TABLE job_tags (
+    job_id INTEGER REFERENCES jobs(id),
+    tag_id INTEGER REFERENCES tags(id),
+    PRIMARY KEY (job_id, tag_id)
+);
+```
+
+### **Testing Architecture**
+
+**Comprehensive Test Suite** (`tests/` - 92 tests total)
+
+- **`test_models.py` (310 lines)**: Model validation and relationships
+- **`test_services.py` (441 lines)**: Service layer business logic
+- **`test_api_endpoints.py` (431 lines)**: API endpoint testing
+- **`test_integration.py` (492 lines)**: Full-stack integration tests
+- **`test_schemas.py` (353 lines)**: Data validation testing
+- **`conftest.py` (112 lines)**: Shared test utilities and fixtures
+
+**Testing Strategy**:
+
+- Unit tests for each layer independently
+- Integration tests for cross-layer functionality
+- API endpoint tests with real HTTP requests
+- Database testing with SQLite for speed
+- Dependency injection testing with mocks
+
+### **Performance Optimizations**
+
+1. **Database Query Optimization**
+
+   - Use of `distinct(Job.id)` to avoid PostgreSQL JSON column issues
+   - Strategic indexing on searchable fields
+   - Efficient join operations in manager layer
+
+2. **Architecture Benefits**
+
+   - Caching can be easily added at service layer
+   - Database operations isolated in manager layer
+   - Business logic separated from data access
+
+3. **Search Performance**
+   - Multi-criteria filtering in single query
+   - Pagination to limit result sets
+   - Tag-based search using relationships instead of JSON
+
+### **Key Features**
+
+✅ **Advanced Job Search**: Multi-criteria filtering (position, location, tags, date range)
+✅ **Tag Management**: Categorized tags with efficient retrieval
+✅ **Pagination**: Efficient browsing of large datasets
+✅ **Data Validation**: Pydantic schemas for request/response validation
+✅ **Error Handling**: Comprehensive error responses with proper HTTP status codes
+✅ **API Documentation**: Auto-generated OpenAPI/Swagger documentation
+✅ **Database Migrations**: Alembic for schema management
+✅ **Dependency Injection**: Clean, testable architecture
+✅ **Comprehensive Testing**: 92 tests with 100% pass rate
 
 ## API Structure
 
-The API is organized into the following routers:
+The API is organized into versioned routers for better maintainability:
 
-- `/api/v1/jobs/*` - Job-related endpoints
-- `/api/v1/tags/*` - Tag-related endpoints
+- **`/api/v1/jobs/*`** - Job-related endpoints
+- **`/api/v1/tags/*`** - Tag-related endpoints
 
 ## API Endpoints
 

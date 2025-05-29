@@ -146,4 +146,4 @@ class JobManager:
         if date_to:
             query = query.filter(Job.job_posting_date <= date_to)
 
-        return query.distinct()
+        return query.distinct(Job.id)
