@@ -119,8 +119,8 @@ const Navbar: React.FC = () => {
                       }
                       alt="Profile"
                     />
-                    <span className="text-gray-700 font-medium">
-                      User ID: {currentUser.uid.slice(0, 8)}...
+                    <span className="text-white font-medium">
+                      User: {currentUser.email}
                     </span>
                     <svg
                       className="w-4 h-4 text-gray-500"
@@ -160,7 +160,7 @@ const Navbar: React.FC = () => {
                         </Link>
                         <button
                           onClick={handleLogout}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          className="block bg-white w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                         >
                           Sign out
                         </button>
@@ -285,7 +285,7 @@ const Navbar: React.FC = () => {
                       alt="Profile"
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-black">
                         User ID: {currentUser.uid.slice(0, 12)}...
                       </p>
                       <p className="text-xs text-gray-500">
@@ -301,7 +301,7 @@ const Navbar: React.FC = () => {
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="w-full bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
                   >
                     Sign out
                   </button>

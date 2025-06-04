@@ -9,6 +9,7 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "../firebase_config";
+import { generateRandomUsername } from "../tools/utils.js";
 
 // Initialize providers
 const googleProvider = new GoogleAuthProvider();
@@ -53,9 +54,12 @@ class AuthService {
         password,
       );
 
-      // Update display name if provided
-      if (displayName && result.user) {
-        await updateProfile(result.user, { displayName });
+      // Generate random username if no display name provided
+      const finalDisplayName = displayName || generateRandomUsername();
+
+      // Update display name
+      if (result.user) {
+        await updateProfile(result.user, { displayName: finalDisplayName });
       }
 
       return result.user;
