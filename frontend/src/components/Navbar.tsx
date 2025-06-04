@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import LoginModal from "./LoginModal";
 
 const Navbar: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [authModalOpen, setAuthModalOpen] = useState(false);
   const location = useLocation();
+  const { currentUser, signOut } = useAuth();
 
   // Helper function to determine if a path is active
   const isActive = (path: string) => {
@@ -11,6 +16,19 @@ const Navbar: React.FC = () => {
       return location.pathname === "/";
     }
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+      setIsProfileOpen(false);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
+  const openAuthModal = () => {
+    setAuthModalOpen(true);
   };
 
   return (
@@ -46,7 +64,7 @@ const Navbar: React.FC = () => {
                   isActive("/")
                     ? "border-gray-900 text-gray-900"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors`}
               >
                 Jobs
               </Link>
@@ -56,20 +74,119 @@ const Navbar: React.FC = () => {
                   isActive("/companies")
                     ? "border-gray-900 text-gray-900"
                     : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
+                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors`}
               >
                 Companies
               </Link>
+              {currentUser && (
+                <Link
+                  to="/saved"
+                  className={`${
+                    isActive("/saved")
+                      ? "border-gray-900 text-gray-900"
+                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                  } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors`}
+                >
+                  Saved Jobs
+                </Link>
+              )}
             </div>
           </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <button
-              type="button"
-              className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
-            >
-              Post a Job
-            </button>
+
+          <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+            {currentUser ? (
+              <>
+                <button
+                  type="button"
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
+                >
+                  Post a Job
+                </button>
+
+                {/* User Profile Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center space-x-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+                  >
+                    <img
+                      className="h-8 w-8 rounded-full border-2 border-gray-200"
+                      src={
+                        currentUser.photoURL ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          currentUser.uid.slice(0, 2),
+                        )}&background=374151&color=fff`
+                      }
+                      alt="Profile"
+                    />
+                    <span className="text-gray-700 font-medium">
+                      User ID: {currentUser.uid.slice(0, 8)}...
+                    </span>
+                    <svg
+                      className="w-4 h-4 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {isProfileOpen && (
+                    <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                      <div className="py-1">
+                        <a
+                          href="#"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Your Profile
+                        </a>
+                        <a
+                          href="#"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Settings
+                        </a>
+                        <Link
+                          to="/saved"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Saved Jobs
+                        </Link>
+                        <button
+                          onClick={handleLogout}
+                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Sign out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => openAuthModal()}
+                  className="text-gray-700 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => openAuthModal()}
+                  className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
+                >
+                  Sign Up
+                </button>
+              </>
+            )}
           </div>
+
           <div className="-mr-2 flex items-center sm:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -116,6 +233,7 @@ const Navbar: React.FC = () => {
         </div>
       </div>
 
+      {/* Mobile menu */}
       {isMenuOpen && (
         <div className="sm:hidden w-full">
           <div className="pt-2 pb-3 space-y-1">
@@ -139,17 +257,81 @@ const Navbar: React.FC = () => {
             >
               Companies
             </Link>
-            <div className="mt-4 pl-3 pr-4">
-              <button
-                type="button"
-                className="w-full bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
+            {currentUser && (
+              <Link
+                to="/saved"
+                className={`${
+                  isActive("/saved")
+                    ? "bg-gray-100 border-gray-900 text-gray-900"
+                    : "border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700"
+                } block pl-3 pr-4 py-2 border-l-4 text-base font-medium`}
               >
-                Post a Job
-              </button>
+                Saved Jobs
+              </Link>
+            )}
+
+            <div className="mt-4 pl-3 pr-4 space-y-2">
+              {currentUser ? (
+                <>
+                  <div className="flex items-center space-x-3 pb-2 border-b border-gray-200">
+                    <img
+                      className="h-10 w-10 rounded-full border-2 border-gray-200"
+                      src={
+                        currentUser.photoURL ||
+                        `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                          currentUser.uid.slice(0, 2),
+                        )}&background=374151&color=fff`
+                      }
+                      alt="Profile"
+                    />
+                    <div>
+                      <p className="text-sm font-medium text-gray-900">
+                        User ID: {currentUser.uid.slice(0, 12)}...
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {currentUser.email}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    className="w-full bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
+                  >
+                    Post a Job
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    Sign out
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => openAuthModal()}
+                    className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                  >
+                    Sign In
+                  </button>
+                  <button
+                    onClick={() => openAuthModal()}
+                    className="w-full bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out"
+                  >
+                    Sign Up
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
+
+      {/* Auth Modal */}
+      <LoginModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+      />
     </nav>
   );
 };
